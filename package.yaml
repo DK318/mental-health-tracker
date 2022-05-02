@@ -1,0 +1,125 @@
+name:                mental-health-tracker
+version:             0.1.0.0
+github:              "DK318/mental-health-tracker"
+license:             BSD3
+author:              "Leonid Vasilev"
+maintainer:          "vasiklenka@gmail.com"
+copyright:           "2022 Leonid Vasilev"
+
+extra-source-files:
+- README.md
+- config.toml
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/mental-health-tracker#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+
+default-extensions:
+  - AllowAmbiguousTypes
+  - ApplicativeDo
+  - BangPatterns
+  - BlockArguments
+  - ConstraintKinds
+  - DataKinds
+  - DefaultSignatures
+  - DeriveAnyClass
+  - DeriveDataTypeable
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveTraversable
+  - DerivingStrategies
+  - DerivingVia
+  - EmptyCase
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MultiParamTypeClasses
+  - MultiWayIf
+  - NamedFieldPuns
+  - NegativeLiterals
+  - NumDecimals
+  - NumericUnderscores
+  - OverloadedLabels
+  - OverloadedStrings
+  - PatternSynonyms
+  - PolyKinds
+  - QuantifiedConstraints
+  - QuasiQuotes
+  - RankNTypes
+  - RecordWildCards
+  - RecursiveDo
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - StrictData
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+  - UndecidableInstances
+  - UndecidableSuperClasses
+  - ViewPatterns
+
+ghc-options:
+  - -Weverything
+  - -Wno-implicit-prelude
+  - -Wno-name-shadowing
+  - -Wno-missing-import-lists
+  - -Wno-missing-export-lists
+  - -Wno-unsafe
+  - -Wno-safe
+  - -Wno-missing-safe-haskell-mode
+  - -Wno-prepositive-qualified-module
+  - -Wno-monomorphism-restriction
+  - -Wno-missed-specialisations
+  - -Wno-all-missed-specialisations
+
+library:
+  source-dirs: src
+  dependencies:
+  - aeson
+  - bytestring
+  - cassava
+  - containers
+  - extra
+  - lens
+  - polysemy
+  - servant
+  - servant-client
+  - servant-multipart-api
+  - servant-multipart-client
+  - text
+  - time
+  - tomland
+
+executables:
+  mental-health-tracker-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - extra
+    - fmt
+    - http-client
+    - http-client-tls
+    - mental-health-tracker
+    - polysemy
+    - servant-client
+    - servant-client-core
+    - text
+    - tomland

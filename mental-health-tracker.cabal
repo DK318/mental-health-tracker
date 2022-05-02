@@ -1,0 +1,178 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           mental-health-tracker
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/mental-health-tracker#readme>
+homepage:       https://github.com/DK318/mental-health-tracker#readme
+bug-reports:    https://github.com/DK318/mental-health-tracker/issues
+author:         Leonid Vasilev
+maintainer:     vasiklenka@gmail.com
+copyright:      2022 Leonid Vasilev
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    config.toml
+
+source-repository head
+  type: git
+  location: https://github.com/DK318/mental-health-tracker
+
+library
+  exposed-modules:
+      Bot.Backend
+      Bot.Emotions
+      Bot.Error
+      Bot.State
+      Config.BotConfig
+      Telegram.API
+      Telegram.JsonExt
+      Telegram.Requests
+      Telegram.Response
+      Telegram.Types
+  other-modules:
+      Paths_mental_health_tracker
+  hs-source-dirs:
+      src
+  default-extensions:
+      AllowAmbiguousTypes
+      ApplicativeDo
+      BangPatterns
+      BlockArguments
+      ConstraintKinds
+      DataKinds
+      DefaultSignatures
+      DeriveAnyClass
+      DeriveDataTypeable
+      DeriveFoldable
+      DeriveFunctor
+      DeriveGeneric
+      DeriveTraversable
+      DerivingStrategies
+      DerivingVia
+      EmptyCase
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      MultiWayIf
+      NamedFieldPuns
+      NegativeLiterals
+      NumDecimals
+      NumericUnderscores
+      OverloadedLabels
+      OverloadedStrings
+      PatternSynonyms
+      PolyKinds
+      QuantifiedConstraints
+      QuasiQuotes
+      RankNTypes
+      RecordWildCards
+      RecursiveDo
+      ScopedTypeVariables
+      StandaloneDeriving
+      StrictData
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeFamilies
+      TypeOperators
+      UndecidableInstances
+      UndecidableSuperClasses
+      ViewPatterns
+  ghc-options: -Weverything -Wno-implicit-prelude -Wno-name-shadowing -Wno-missing-import-lists -Wno-missing-export-lists -Wno-unsafe -Wno-safe -Wno-missing-safe-haskell-mode -Wno-prepositive-qualified-module -Wno-monomorphism-restriction -Wno-missed-specialisations -Wno-all-missed-specialisations
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , cassava
+    , containers
+    , extra
+    , lens
+    , polysemy
+    , servant
+    , servant-client
+    , servant-multipart-api
+    , servant-multipart-client
+    , text
+    , time
+    , tomland
+  default-language: Haskell2010
+
+executable mental-health-tracker-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_mental_health_tracker
+  hs-source-dirs:
+      app
+  default-extensions:
+      AllowAmbiguousTypes
+      ApplicativeDo
+      BangPatterns
+      BlockArguments
+      ConstraintKinds
+      DataKinds
+      DefaultSignatures
+      DeriveAnyClass
+      DeriveDataTypeable
+      DeriveFoldable
+      DeriveFunctor
+      DeriveGeneric
+      DeriveTraversable
+      DerivingStrategies
+      DerivingVia
+      EmptyCase
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      MultiWayIf
+      NamedFieldPuns
+      NegativeLiterals
+      NumDecimals
+      NumericUnderscores
+      OverloadedLabels
+      OverloadedStrings
+      PatternSynonyms
+      PolyKinds
+      QuantifiedConstraints
+      QuasiQuotes
+      RankNTypes
+      RecordWildCards
+      RecursiveDo
+      ScopedTypeVariables
+      StandaloneDeriving
+      StrictData
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeFamilies
+      TypeOperators
+      UndecidableInstances
+      UndecidableSuperClasses
+      ViewPatterns
+  ghc-options: -Weverything -Wno-implicit-prelude -Wno-name-shadowing -Wno-missing-import-lists -Wno-missing-export-lists -Wno-unsafe -Wno-safe -Wno-missing-safe-haskell-mode -Wno-prepositive-qualified-module -Wno-monomorphism-restriction -Wno-missed-specialisations -Wno-all-missed-specialisations -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , extra
+    , fmt
+    , http-client
+    , http-client-tls
+    , mental-health-tracker
+    , polysemy
+    , servant-client
+    , servant-client-core
+    , text
+    , tomland
+  default-language: Haskell2010
