@@ -25,7 +25,7 @@ mkUpdatesRequest offset = GetUpdatesRequest (Just offset) Nothing Nothing Nothin
 data SendMessageRequest = SendMessageRequest
   { smr_chat_id :: Integer
   , smr_text :: Text
-  , smr_reply_markup :: Maybe ReplyKeyboardMarkup
+  , smr_reply_markup :: Maybe ReplyKeyboard
   }
   deriving stock (Show, Generic)
 deriveJSON (dropOptions 4) ''SendMessageRequest

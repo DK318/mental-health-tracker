@@ -9,7 +9,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Map as M
 import Data.Time (UTCTime)
-import Data.Csv (ToRecord (toRecord), record, ToField (toField))
+import Data.Csv (ToNamedRecord (toNamedRecord), namedRecord, (.=), Header, header)
 import Data.Maybe (fromMaybe)
 
 data RageSubtype
@@ -26,23 +26,7 @@ data RageSubtype
   | Dislike
   | Vulnerability
   | Annoyance
-  deriving stock (Eq, Ord)
-
-instance Show RageSubtype where
-  show = \case
-    Rabies -> "Бешенство"
-    Fury -> "Ярость"
-    Anger -> "Злость"
-    Hatred -> "Ненависть"
-    Disgust -> "Отвращение"
-    Disturbance -> "Возмущение"
-    Indignation -> "Негодование"
-    Wrath -> "Гнев"
-    Irritation -> "Раздражение"
-    Contempt -> "Презрение"
-    Dislike -> "Неприязнь"
-    Vulnerability -> "Уязвленность"
-    Annoyance -> "Досада"
+  deriving stock (Show, Eq, Ord)
 
 data FearSubtype
   = Horror
@@ -53,18 +37,7 @@ data FearSubtype
   | Apprehension
   | Perplexity
   | Timidity
-  deriving stock (Eq, Ord)
-
-instance Show FearSubtype where
-  show = \case
-    Horror -> "Ужас"
-    Fright -> "Испуг"
-    Fear -> "Страх"
-    Anxiety -> "Тревога"
-    Worry -> "Беспокойство"
-    Apprehension -> "Опасение"
-    Perplexity -> "Растерянность"
-    Timidity -> "Робость"
+  deriving stock (Show, Eq, Ord)
 
 data JoySubtype
   = Delight
@@ -80,23 +53,7 @@ data JoySubtype
   | Gratitude
   | Inspiration
   | Pleasure
-  deriving stock (Eq, Ord)
-
-instance Show JoySubtype where
-  show = \case
-    Delight -> "Восторг"
-    Admiration -> "Восхищение"
-    Rapture -> "Упоение"
-    Exultation -> "Ликование"
-    Happiness -> "Счастье"
-    Joy -> "Радость"
-    Elation -> "Приподнятость"
-    Appeasement -> "Умиротворение"
-    Tenderness -> "Нежность"
-    Pride -> "Гордость"
-    Gratitude -> "Благодарность"
-    Inspiration -> "Вдохновение"
-    Pleasure -> "Наслаждение"
+  deriving stock (Show, Eq, Ord)
 
 data SadnessSubtype
   = Sorrow
@@ -112,61 +69,26 @@ data SadnessSubtype
   | Regret
   | Weakness
   | Depression
-  deriving stock (Eq, Ord)
-
-instance Show SadnessSubtype where
-  show = \case
-    Sorrow -> "Скорбь"
-    Grief -> "Горе"
-    Despair -> "Отчаяние"
-    Yearning -> "Тоска"
-    Resentment -> "Обида"
-    Emptiness -> "Опустошенность"
-    Melancholy -> "Грусть"
-    Sadness -> "Печаль"
-    Despondency -> "Уныние"
-    Helplessness -> "Беспомощность"
-    Regret -> "Сожаление"
-    Weakness -> "Бессилие"
-    Depression -> "Подавленность"
+  deriving stock (Show, Eq, Ord)
 
 data SurpriseSubtype
   = Stun
   | Amazement
   | Astonishment
   | Confusion
-  deriving stock (Eq, Ord)
-
-instance Show SurpriseSubtype where
-  show = \case
-    Stun -> "Оторопь"
-    Amazement -> "Изумление"
-    Astonishment -> "Удивление"
-    Confusion -> "Замешательство"
+  deriving stock (Show, Eq, Ord)
 
 data ShameSubtype
   = Cringe
   | Embarrassment
   | Discomfiture
   | Awkwardness
-  deriving stock (Eq, Ord)
-
-instance Show ShameSubtype where
-  show = \case
-    Cringe -> "Стыд"
-    Embarrassment -> "Конфуз"
-    Discomfiture -> "Смущение"
-    Awkwardness -> "Неловкость"
+  deriving stock (Show, Eq, Ord)
 
 data InterestSubtype
   = Interest
   | Curiosity
-  deriving stock (Eq, Ord)
-
-instance Show InterestSubtype where
-  show = \case
-    Interest -> "Интерес"
-    Curiosity -> "Любопытство"
+  deriving stock (Show, Eq, Ord)
 
 data RageEmotion = RageEmotion
 data FearEmotion = FearEmotion
@@ -177,25 +99,25 @@ data ShameEmotion = ShameEmotion
 data InterestEmotion = InterestEmotion
 
 instance Show RageEmotion where
-  show RageEmotion = "Злость"
+  show RageEmotion = "Rage"
 
 instance Show FearEmotion where
-  show FearEmotion = "Страх"
+  show FearEmotion = "Fear"
 
 instance Show JoyEmotion where
-  show JoyEmotion = "Радость"
+  show JoyEmotion = "Joy"
 
 instance Show SadnessEmotion where
-  show SadnessEmotion = "Грусть"
+  show SadnessEmotion = "Sadness"
 
 instance Show SurpriseEmotion where
-  show SurpriseEmotion = "Удивление"
+  show SurpriseEmotion = "Surprise"
 
 instance Show ShameEmotion where
-  show ShameEmotion = "Стыд"
+  show ShameEmotion = "Shame"
 
 instance Show InterestEmotion where
-  show InterestEmotion = "Интерес"
+  show InterestEmotion = "Interest"
 
 class Emotion emotion where
   type Subtype emotion :: Type
@@ -317,13 +239,22 @@ data UserEmotion = UserEmotion
   }
 makeLensesWith abbreviatedFields ''UserEmotion
 
-instance ToRecord UserEmotion where
-  toRecord (UserEmotion (TrackedEmotion emotion subtype) mComment time) =
-    record
-      [ toField $ show emotion
-      , toField $ show subtype
-      , toField comment
-      , toField $ show time
+instance ToNamedRecord UserEmotion where
+  toNamedRecord (UserEmotion (TrackedEmotion emotion subtype) mComment time) =
+    namedRecord
+      [ "Emotion" .= show emotion
+      , "Emotion subtype" .= show subtype
+      , "Comment" .= comment
+      , "Time" .= show time
       ]
     where
       comment = fromMaybe "" mComment
+
+emotionsHeader :: Header
+emotionsHeader =
+  header
+    [ "Emotion"
+    , "Emotion subtype"
+    , "Comment"
+    , "Time"
+    ]

@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-partial-fields #-}
 module Telegram.Types where
 
 import Control.Lens
@@ -48,15 +49,20 @@ newtype KeyboardButton = KeyboardButton { kb_text :: Text }
   deriving newtype (IsString)
 deriveJSON (dropOptions 3) ''KeyboardButton
 
-data ReplyKeyboardMarkup = ReplyKeyboardMarkup
-  { rkm_keyboard :: [[KeyboardButton]]
-  , rkm_resize_keyboard :: Maybe Bool
-  , rkm_one_time_keyboard :: Maybe Bool
-  , rkm_input_field_placeholder :: Maybe Text
-  , rkm_selective :: Maybe Bool
-  }
-  deriving stock (Show, Generic)
-deriveJSON (dropOptions 4) ''ReplyKeyboardMarkup
+data ReplyKeyboard
+  = ReplyKeyboardMarkup
+    { rk_keyboard :: [[KeyboardButton]]
+    , rk_resize_keyboard :: Maybe Bool
+    , rk_one_time_keyboard :: Maybe Bool
+    , rk_input_field_placeholder :: Maybe Text
+    , rk_selective :: Maybe Bool
+    }
+  | ReplyKeyboardRemove
+    { rk_remove_keyboard :: Bool
+    , rk_selective :: Maybe Bool
+    }
+    deriving stock (Show, Generic)
+deriveJSON (dropOptions 3) ''ReplyKeyboard
 
 data Message = Message
   { _message_message_id :: Integer

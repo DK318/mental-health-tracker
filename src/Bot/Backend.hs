@@ -19,7 +19,7 @@ import Data.Time (getCurrentTime)
 import Control.Monad.Extra (whenJust)
 import Data.Either (fromRight)
 import Control.Lens.Extras (is)
-import Data.Csv (encode)
+import Data.Csv (encodeByName)
 import Servant.Multipart.Client (genBoundary)
 
 type Effects r = Members '[State BotState, Embed ClientM, Embed IO, Final IO] r
@@ -88,7 +88,7 @@ processUpdates_ updates = do
       runError action >>= \case
         Right () -> modify onSuccess
         Left err -> do
-          let sendRequest = SendMessageRequest userId (T.pack $ "Параша " <> show err) Nothing
+          let sendRequest = SendMessageRequest userId (T.pack $ "Error " <> show err) Nothing
           tkn <- get @BotState <&> view token
           void $ embed $ sendMessage tkn sendRequest
 
@@ -100,32 +100,26 @@ sendStats user = do
   if _Just `is` mUserEmotions
     then do
       let userEmotions = mUserEmotions ^?! _Just
-      let csv = encode userEmotions
-      let header = encode
-            [("Эмоция" :: Text
-            , "Подтип эмоции" :: Text
-            , "Комментарий" :: Text
-            , "Время" :: Text
-            )]
+      let csv = encodeByName emotionsHeader userEmotions
       boundary <- embed genBoundary
-      let sendRequest = SendDocumentRequest (user ^. user_id) (header <> csv)
+      let sendRequest = SendDocumentRequest (user ^. user_id) csv
       void $ embed $ sendDocument (botState ^. token) (boundary, sendRequest)
     else throw NoUserEmotions
 
 askForEmotion :: (Effects r) => User -> Sem r ()
 askForEmotion user = do
   let buttons =
-        [ ["Злость"]
-        , ["Страх"]
-        , ["Радость"]
-        , ["Грусть"]
-        , ["Удивление"]
-        , ["Стыд"]
-        , ["Интерес"]
+        [ ["Rage"]
+        , ["Fear"]
+        , ["Joy"]
+        , ["Sadness"]
+        , ["Surprise"]
+        , ["Shame"]
+        , ["Interest"]
         ]
 
-  let keyboard = ReplyKeyboardMarkup buttons Nothing (Just True) (Just "Эмоция") (Just True)
-  let sendRequest = SendMessageRequest (user ^. user_id) "Выберите эмоцию:" (Just keyboard)
+  let keyboard = ReplyKeyboardMarkup buttons Nothing (Just True) (Just "Emotion") (Just True)
+  let sendRequest = SendMessageRequest (user ^. user_id) "Choose emotion:" (Just keyboard)
 
   botState <- get @BotState
   let botState' =
@@ -142,8 +136,8 @@ askForSubtype user text = do
   (emotion, labels) <- getEmotion text
 
   let buttons = [[KeyboardButton label] | label <- labels]
-  let keyboard = ReplyKeyboardMarkup buttons Nothing (Just True) (Just "Подтип эмоции") (Just True)
-  let sendRequest = SendMessageRequest (user ^. user_id) "Выберите подтип эмоции" (Just keyboard)
+  let keyboard = ReplyKeyboardMarkup buttons Nothing (Just True) (Just "Emotion subtype") (Just True)
+  let sendRequest = SendMessageRequest (user ^. user_id) "Choose emotion subtype:" (Just keyboard)
 
   botState <- get @BotState
 
@@ -157,13 +151,13 @@ askForSubtype user text = do
   where
     getEmotion :: Text -> Sem r (SomeEmotion, [Text])
     getEmotion = \case
-      "Злость" -> pure (SomeEmotion RageEmotion, showSubtypes @RageEmotion)
-      "Страх" -> pure (SomeEmotion FearEmotion, showSubtypes @FearEmotion)
-      "Радость" -> pure (SomeEmotion JoyEmotion, showSubtypes @JoyEmotion)
-      "Грусть" -> pure (SomeEmotion SadnessEmotion, showSubtypes @SadnessEmotion)
-      "Удивление" -> pure (SomeEmotion SurpriseEmotion, showSubtypes @SurpriseEmotion)
-      "Стыд" -> pure (SomeEmotion ShameEmotion, showSubtypes @ShameEmotion)
-      "Интерес" -> pure (SomeEmotion InterestEmotion, showSubtypes @InterestEmotion)
+      "Rage" -> pure (SomeEmotion RageEmotion, showSubtypes @RageEmotion)
+      "Fear" -> pure (SomeEmotion FearEmotion, showSubtypes @FearEmotion)
+      "Joy" -> pure (SomeEmotion JoyEmotion, showSubtypes @JoyEmotion)
+      "Sadness" -> pure (SomeEmotion SadnessEmotion, showSubtypes @SadnessEmotion)
+      "Surprise" -> pure (SomeEmotion SurpriseEmotion, showSubtypes @SurpriseEmotion)
+      "Shame" -> pure (SomeEmotion ShameEmotion, showSubtypes @ShameEmotion)
+      "Interest" -> pure (SomeEmotion InterestEmotion, showSubtypes @InterestEmotion)
       _ -> throw NoSuchEmotion
 
 makeEmotion :: (Effects r, (Member (Error BotError) r)) => SomeEmotion -> User -> Text -> Sem r ()
@@ -173,7 +167,9 @@ makeEmotion (SomeEmotion (emotion :: a)) user text = do
 
   let trackedEmotion = TrackedEmotion emotion subtype
 
-  let sendRequest = SendMessageRequest (user ^. user_id) "Введите комментарий. Если не хотите, введите точку (.)" Nothing
+  let deleteKeyboard = ReplyKeyboardRemove True (Just True)
+
+  let sendRequest = SendMessageRequest (user ^. user_id) "Enter comment. If you don't want pass dot instead (.)" (Just deleteKeyboard)
   void $ embed $ sendMessage (botState ^. token) sendRequest
 
   let botState' =
@@ -188,7 +184,7 @@ getComment trackedEmotion user text = do
 
   botState <- get @BotState
 
-  let sendRequest = SendMessageRequest (user ^. user_id) "Ваша эмоция отслежена!" Nothing
+  let sendRequest = SendMessageRequest (user ^. user_id) "Emotion tracked!" Nothing
   void $ embed $ sendMessage (botState ^. token) sendRequest
 
   now <- embed getCurrentTime
